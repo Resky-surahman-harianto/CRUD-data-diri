@@ -1,0 +1,265 @@
+package latuhansaja;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.Year;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+
+public class MenambahDataBuku extends TanggalDanWaktu {
+
+    public void MenambahBuku() throws IOException {
+
+        FileWriter wiri;
+        BufferedWriter file = null;
+        try {
+            wiri = new FileWriter("dataBase.txt", true);
+            file = new BufferedWriter(wiri);
+        } catch (Exception e) {
+            System.err.println("Database tidak di temukan\nSilahkan membuat database terlebih dahulu");
+        }
+
+//      Mendeklarasikan Class Mencari buku
+        MencariBuku cari = new MencariBuku();
+
+        String nama, tempat, kelamin, alamat, agama, pekerjaan, negara;
+
+        System.out.print("\nMasukan Nama            : ");
+        nama = tdkIsi("Masukan Nama            : ");
+
+        System.out.print("Masukan Tempat lahir    : ");
+        tempat = tdkIsi("Masukan Tempat lahir    : ");
+
+        System.out.print("Masukan Tanggal lahir   : ");
+        super.tanggal = cekTanggal();
+
+        System.out.print("Masukan Bulan lahir     : ");
+        super.bulan = cekBulan();
+
+        System.out.print("Masukan Tahun lahir     : ");
+        super.tahun = cekTahun();
+
+        System.out.print("Masukan Jenis kelamin   : ");
+        kelamin = cekKelamin();
+
+        System.out.print("Masukan Alamat          : ");
+        alamat = tdkIsi("Masukan Alamat          : ");
+
+        System.out.print("Masukan Agama           : ");
+        agama = tdkIsi("Masukan Agama           : ");
+
+        System.out.print("Masukan Pekerjaan       : ");
+        pekerjaan = tdkIsi("Masukan Pekerjaan       : ");
+
+        System.out.print("Masukan Kewarganegaraan : ");
+        negara = cekKewargaNegaraan();
+        
+        String lahir = tempat + " " + super.tanggal + "-" + super.bulan + "-" + super.tahun;
+        String[] data = {nama + "," + lahir + "," + kelamin + "," + alamat + "," + agama + "," + pekerjaan + "," + negara};
+
+        boolean isNama = cekBook(nama, false);
+
+        if (!isNama) {
+
+            boolean isExis = cari.cekBuku(data, false);
+
+            if (!isExis) {
+                System.out.println("\n\n===============================================");
+                System.out.println("Data yang telah anda masukan adalah : ");
+                System.out.println("===============================================");
+                System.out.println("Nama                 : " + nama);
+                System.out.println("Tempat tanggal lahir : " + lahir.toLowerCase());
+                System.out.println("Jenis kelamin        : " + kelamin.toLowerCase());
+                System.out.println("Alamat               : " + alamat.toLowerCase());
+                System.out.println("Agama                : " + agama.toLowerCase());
+                System.out.println("Pekerjaan            : " + pekerjaan.toLowerCase());
+                System.out.println("Kewarganegaraan      : " + negara.toUpperCase());
+                System.out.println("===============================================");
+
+                boolean tulis = LatuhanSaja.isUlang("Apakah anda yakin ingin menambahkan data tersebut");
+
+                if (tulis) {
+                    file.write(nama + "," + lahir.toLowerCase() + "," + kelamin.toLowerCase() + "," + alamat.toLowerCase() + "," + agama.toLowerCase() + "," + pekerjaan.toLowerCase() + "," + negara.toUpperCase());
+                    file.newLine();
+                    file.flush();
+                    System.out.println("\nInput telah di tambahkan di database");
+                    cekBook(nama, true);
+                }
+
+            }
+
+        } else {
+            System.out.println("\n================================================================================================================================");
+            System.out.println("Anda tidak dapat menambahkan input tersebut di database karena atas nama [ " + nama + " ] telah tersedia di database !!!\nDan tidak dapat di tambahkan....");
+            System.out.println("================================================================================================================================");
+            System.out.println("Sebagai berikut : ");
+            cekBook(nama, true);
+        }
+
+    }
+
+    private static boolean cekBook(String nama, boolean isTampil) throws IOException {
+
+        FileReader reader;
+        BufferedReader file = null;
+        try {
+            reader = new FileReader("dataBase.txt");
+            file = new BufferedReader(reader);
+        } catch (Exception e) {
+            System.err.println("database tidak di temukan");
+        }
+
+        String data = file.readLine();
+
+        if (isTampil) {
+            System.out.println("\n| No |\tNama                      |\tTempat tanggal lahir       |\tJenis kelamin       |\tAlamat           |\tAgama       |\tPekerjaan            |\tKewarganegaraan |");
+            System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+        }
+
+        boolean isExis = false;
+        int nomor = 0;
+        while (data != null) {
+
+            isExis = true;
+
+            for (int i = 0; i < nama.length(); i++) {
+                isExis = isExis && data.toLowerCase().contains(nama.toLowerCase());
+            }
+
+            if (isExis) {
+                if (isTampil) {
+                    nomor++;
+                    StringTokenizer token = new StringTokenizer(data, ",");
+
+                    System.out.printf("| %d  ", nomor);
+                    System.out.printf("|\t%-26s", token.nextToken());
+                    System.out.printf("|\t%-27s", token.nextToken());
+                    System.out.printf("|\t%-20s", token.nextToken());
+                    System.out.printf("|\t%-17s", token.nextToken());
+                    System.out.printf("|\t%-12s", token.nextToken());
+                    System.out.printf("|\t%-21s", token.nextToken());
+                    System.out.printf("|\t%s", token.nextToken());
+                    System.out.print("\n");
+                } else {
+                    break;
+                }
+
+            }
+
+            data = file.readLine();
+        }
+        if (isTampil) {
+            System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+        }
+//        System.out.println("is Methot : " + isExis);
+
+        return isExis;
+
+    }
+
+    @Override
+    public String cekTanggal() {
+
+        String tanggal = input.nextLine();
+
+        while (tanggal.isEmpty() || !tanggal.equalsIgnoreCase("01") && !tanggal.equalsIgnoreCase("02") && !tanggal.equalsIgnoreCase("03") && !tanggal.equalsIgnoreCase("04") && !tanggal.equalsIgnoreCase("05") && !tanggal.equalsIgnoreCase("06") && !tanggal.equalsIgnoreCase("07") && !tanggal.equalsIgnoreCase("08") && !tanggal.equalsIgnoreCase("09") && !tanggal.equalsIgnoreCase("10") && !tanggal.equalsIgnoreCase("11") && !tanggal.equalsIgnoreCase("12") && !tanggal.equalsIgnoreCase("13") && !tanggal.equalsIgnoreCase("14") && !tanggal.equalsIgnoreCase("15") && !tanggal.equalsIgnoreCase("16") && !tanggal.equalsIgnoreCase("17") && !tanggal.equalsIgnoreCase("18") && !tanggal.equalsIgnoreCase("19") && !tanggal.equalsIgnoreCase("20") && !tanggal.equalsIgnoreCase("21") && !tanggal.equalsIgnoreCase("22") && !tanggal.equalsIgnoreCase("23") && !tanggal.equalsIgnoreCase("24") && !tanggal.equalsIgnoreCase("25") && !tanggal.equalsIgnoreCase("26") && !tanggal.equalsIgnoreCase("27") && !tanggal.equalsIgnoreCase("28") && !tanggal.equalsIgnoreCase("29") && !tanggal.equalsIgnoreCase("30") && !tanggal.equalsIgnoreCase("31")) {
+            System.err.println("Tanggal tidak valit");
+            System.out.print("\nMasukan Tanggal lahir   :");
+            tanggal = input.nextLine();
+        }
+
+        return tanggal;
+
+    }
+
+    @Override
+    public String cekBulan() {
+
+        String bulan = input.nextLine();
+
+        while (!bulan.equalsIgnoreCase("Januari") && !bulan.equalsIgnoreCase("Februari") && !bulan.equalsIgnoreCase("Maret") && !bulan.equalsIgnoreCase("April") && !bulan.equalsIgnoreCase("Mei") && !bulan.equalsIgnoreCase("Juni") && !bulan.equalsIgnoreCase("Juli") && !bulan.equalsIgnoreCase("Agustus") && !bulan.equalsIgnoreCase("September") && !bulan.equalsIgnoreCase("Oktober") && !bulan.equalsIgnoreCase("November") && !bulan.equalsIgnoreCase("Desember")) {
+            System.err.println("Bulan tidak valit");
+            System.out.print("\nMasukan Bulan lahir     : ");
+            bulan = input.nextLine();
+        }
+
+        return bulan;
+
+    }
+
+    @Override
+    public String cekTahun() {
+
+        String tahun = input.nextLine();
+
+        boolean ulang = false;
+        while (!ulang) {
+
+            try {
+                Year.parse(tahun);
+                ulang = true;
+            } catch (Exception e) {
+                System.err.println("Tahun tidak valit");
+                System.out.println("\nMasukan Tahun lahir     : ");
+                tahun = input.nextLine();
+            }
+
+        }
+
+        return tahun;
+
+    }
+
+    public static String cekKelamin() {
+
+        Scanner input = new Scanner(System.in);
+
+        String data = input.nextLine();
+
+        while (!data.equalsIgnoreCase("Pria") && !data.equalsIgnoreCase("Wanita")) {
+            System.err.println("Gender tidak valit (Pria / Wanita) ???");
+            System.out.print("\nMasukan Jenis kelamin   : ");
+            data = input.nextLine();
+        }
+
+        return data;
+
+    }
+
+    public static String cekKewargaNegaraan() {
+
+        Scanner input = new Scanner(System.in);
+
+        String data = input.nextLine();
+
+        while (!data.equalsIgnoreCase("wni") && !data.equalsIgnoreCase("wna")) {
+            System.err.println("Warga negara tidak valit (WNI / WNA)???");
+            System.out.print("\nMasukan Kewarganegaraan : ");
+            data = input.nextLine();
+        }
+
+        return data;
+
+    }
+
+    public static String tdkIsi(String mesage) {
+
+        Scanner input = new Scanner(System.in);
+
+        String data = input.nextLine();
+
+        while (data.isEmpty()) {
+            System.err.println("Masukan input!!!");
+            System.out.print("\n" + mesage);
+            data = input.nextLine();
+        }
+
+        return data;
+
+    }
+}

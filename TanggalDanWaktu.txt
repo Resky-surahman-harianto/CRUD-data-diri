@@ -1,0 +1,22 @@
+package latuhansaja;
+
+import java.util.Scanner;
+
+public abstract class TanggalDanWaktu {
+
+    Scanner input = new Scanner(System.in);
+
+    public String tanggal;
+    public String bulan;
+    public String tahun;
+
+//  Methot abstrack
+    
+    public abstract String cekTanggal();
+    
+    public abstract String cekBulan();
+    
+    public abstract String cekTahun();
+
+    
+}

@@ -1,0 +1,74 @@
+package latuhansaja;
+
+import java.io.IOException;
+import java.util.Scanner;
+
+public class LatuhanSaja {
+
+    public static void main(String[] args) throws IOException {
+
+        Scanner input = new Scanner(System.in);
+        
+//      Mengdeklarasikan Class 
+        ReadDatabase read = new ReadDatabase();
+        MencariBuku cari = new MencariBuku();
+        MenambahDataBuku tambah = new MenambahDataBuku();
+        
+        boolean islanjud = true;
+        while (islanjud) {
+            System.out.println("\n1.Melihat seluruh bio data di Database");
+            System.out.println("2.Mencari bio data di Database");
+            System.out.println("3.Menambah bio data di Database");
+
+            System.out.print("\nPilih : ");
+            String pilih = input.nextLine();
+
+            switch (pilih) {
+                case "1":
+                    System.out.println("\n=====================================");
+                    System.out.println(" Melihat seluruh bio data di Database");
+                    System.out.println("=====================================");
+                    read.lihatBuku();
+                    break;
+                case "2":
+                    System.out.println("\n=====================================");
+                    System.out.println(" Mencari bio data di Database");
+                    System.out.println("=====================================");
+                    cari.cariBuku();
+                    break;
+                case "3":
+                    System.out.println("\n=====================================");
+                    System.out.println("3.Menambah bio data di Database");
+                    System.out.println("=====================================");
+                    tambah.MenambahBuku();
+                    break;
+                default:
+                    System.err.println("\nInput tidak di kenali");
+                    break;
+
+            }
+
+            islanjud = isUlang("Apakah anda ingin melanjudkan");
+
+        }
+
+    }
+
+    public static boolean isUlang(String mesage) {
+
+        Scanner input = new Scanner(System.in);
+
+        System.out.println("\n" + mesage + "(Y/N)");
+        String data = input.nextLine();
+
+        while (!data.equalsIgnoreCase("y") && !data.equalsIgnoreCase("n")) {
+            System.err.println("Input tidak di kenali");
+            System.out.println("\n" + mesage + "(Y/N)");
+            data = input.nextLine();
+        }
+
+        return data.equalsIgnoreCase("y");
+
+    }
+
+}
